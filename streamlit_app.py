@@ -103,7 +103,7 @@ def load_data_from_drive():
         Supports multiple file formats (csv, excel, parquet).
         """
         # Define the data directory - update this path to your data location
-        data_file = "/workspaces/mf-risk-return/data/scheme_stats_MC_atleast_3_yrs.csv"  # Update this path
+        data_file = "data/scheme_stats_MC_atleast_3_yrs.csv"  # Update this path
         
         try:
             # Look for data files in the specified directory
