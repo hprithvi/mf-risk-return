@@ -141,6 +141,7 @@ fig = px.scatter(
     )
 fig.update_traces(marker_size=4)
 fig.update_layout(scattergap=1)
+st.plotly_chart(fig)
 
 search_term = st.text_input("Search for a scheme:")
     
