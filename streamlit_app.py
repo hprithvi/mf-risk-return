@@ -97,6 +97,17 @@ import plotly.express as px
     
 from pathlib import Path
 
+def setup_page():
+        """Configure the Streamlit page settings"""
+        st.set_page_config(
+            page_title="MF Analysis Dashboard",
+            page_icon="📈",
+            layout="wide"
+        )
+        st.title("MF Analysis Dashboard")
+
+setup_page()
+
 def load_data_from_drive():
         """
         Load data from a specific directory on drive.
