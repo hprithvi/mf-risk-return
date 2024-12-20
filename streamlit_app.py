@@ -131,6 +131,9 @@ df = load_data_from_drive()
 df['annualized_mean_std'] = np.round(df['annualized_mean_std'] , 2)
 df['annualized_median_return'] = np.round(df['annualized_median_return'] , 2)
 st.write("The below plot shows how risk and median returns (both annualized) are related for funds that are at least 3 years old and currently active ")
+st.write("\n Risk is measured as annualized standard deviation of daily returns for a mutual fund")
+st.write("\n Annualized Median Return is the return one could expect about 50 percent of the time, given the funds historical returns")
+
 # Create scatter plot
 fig = px.scatter( 
     df,
@@ -143,11 +146,11 @@ fig.update_traces(marker_size=4)
 fig.update_layout(scattergap=1)
 st.plotly_chart(fig)
 
-search_term = st.text_input("Search for a scheme:")
+search_scheme = st.text_input("Search for a scheme:")
     
     # Filter schemes based on search
-if search_term:
-    filtered_df = df[df['scheme_name'].str.contains(search_term, case=False, na=False)]
+if search_scheme:
+    filtered_df = df[df['scheme_name'].str.contains(search_scheme, case=False, na=False)]
     selected_scheme = st.selectbox(
        "Select a scheme:",
         filtered_df['scheme_name'].tolist()
@@ -185,6 +188,8 @@ if selected_scheme:
     st.write("Annualized median Returns of", selected_scheme,":", round(selected_scheme_returns, 2))
     st.write("Annualized Risk of", selected_scheme,":", round(selected_scheme_risk,2))
     st.write("\n Top 5 Funds best returns and Similar Risk Profile (within 0.5%):")
+    st.write("\n This table lists top 5 Mutual funds in terms of annualized median return and a similar level of risk as that of your selected fund")
+    # st.write("\n If your selected fund is not in the list, investing in one of these funds would ")
     # st.write("risk and returns {0}, {1}")        
     # Get the risk of selected scheme
     # selected_risk = df['annualized_mean_std'].values[0]
@@ -204,7 +209,8 @@ if selected_scheme:
 
 
     st.write("\n 5 Funds with Similar Returns Profile (within 0.25%) and lower risk:")
-            
+    st.write("\n This table lists 5 Mutual funds with low risk that have annualized median return comparable to your selected fund")
+
     # Get the risk of selected scheme
     selected_return = df['annualized_median_return'].values[0]
             
