@@ -1,5 +1,6 @@
 import streamlit as st
 import pandas as pd
+import numpy as np
 #conda install plotly
 import plotly.express as px
 
@@ -127,7 +128,19 @@ def load_data_from_drive():
             st.stop()
 
 df = load_data_from_drive()
-
+df['annualized_mean_std'] = np.round(df['annualized_mean_std'] , 2)
+df['annualized_median_return'] = np.round(df['annualized_median_return'] , 2)
+st.write("The below plot shows how risk and median returns (both annualized) are related for funds at least 3 years old ")
+# Create scatter plot
+fig = px.scatter( 
+    df,
+    x='annualized_mean_std',
+    y='annualized_median_return',
+    hover_data=['scheme_name'],
+    title='Risk vs Returns Analysis'
+    )
+fig.update_traces(marker_size=4)
+fig.update_layout(scattergap=1)
 
 search_term = st.text_input("Search for a scheme:")
     
@@ -141,16 +154,7 @@ if search_term:
 else:
     selected_scheme = None
     
-    # Create scatter plot
-fig = px.scatter( 
-    df,
-    x='annualized_mean_std',
-    y='annualized_median_return',
-    hover_data=['scheme_name'],
-    title='Risk vs Returns Analysis'
-    )
-fig.update_traces(marker_size=4)
-fig.update_layout(scattergap=1)
+
     
     # Highlight selected scheme if any
 if selected_scheme:
