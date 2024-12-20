@@ -130,7 +130,7 @@ def load_data_from_drive():
 df = load_data_from_drive()
 df['annualized_mean_std'] = np.round(df['annualized_mean_std'] , 2)
 df['annualized_median_return'] = np.round(df['annualized_median_return'] , 2)
-st.write("The below plot shows how risk and median returns (both annualized) are related for funds at least 3 years old ")
+st.write("The below plot shows how risk and median returns (both annualized) are related for funds that are at least 3 years old and currently active ")
 # Create scatter plot
 fig = px.scatter( 
     df,
