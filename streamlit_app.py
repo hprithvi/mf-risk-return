@@ -108,7 +108,7 @@ def setup_page():
             page_icon="📈",
             layout="wide"
         )
-        st.title("")
+        st.title("Exploring Risk and Return Relationship of Mutual Funds")
 
 setup_page()
 
@@ -134,7 +134,7 @@ def load_data_from_drive():
             st.error(f"Error loading data: {str(e)}")
             st.stop()
 
-st.title('Exploring Risk and Return Relationship for Mutual Funds')
+# st.title('Exploring Risk and Return Relationship for Mutual Funds')
 
 df = load_data_from_drive()
 df['annualized_mean_std'] = np.round(df['annualized_mean_std'] , 2)
