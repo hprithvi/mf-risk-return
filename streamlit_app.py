@@ -1,5 +1,9 @@
 import streamlit as st
 import streamlit.components.v1 as components
+import pathlib
+from bs4 import BeautifulSoup
+import logging
+import shutil
 # with open("google_analytics.html", "r") as f:
 #     html_code = f.read()
 #     components.html(html_code, height=0)
@@ -23,24 +27,43 @@ def inject_ga():
         gtag('config', 'G-GFGYLG0VME');
     </script>
     """
+     # Insert the script in the head tag of the static template inside your virtual
+    st.write(pathlib.Path(st.__file__).parent)
+    index_path = pathlib.Path(st.__file__).parent / "static" / "index.html"
+    logging.info(f'editing {index_path}')
+    soup = BeautifulSoup(index_path.read_text(), features="html.parser")
+    if not soup.find(id='G-GFGYLG0VME'): 
+        bck_index = index_path.with_suffix('.bck')
+        if bck_index.exists():
+            shutil.copy(bck_index, index_path)  
+        else:
+            shutil.copy(index_path, bck_index)  
+        html = str(soup)
+        new_html = html.replace('<head>', '<head>\n' + GA_JS)
+        index_path.write_text(new_html)
+
+
+
+    
     
     # Full HTML with GA in head
-    html_code = f"""
-        <html>
-            <head>
-                {GA_JS}
-            </head>
-            <body>
-                <script>
-                    // This ensures the GA code runs
-                    console.log('GA injection successful');
-                </script>
-            </body>
-        </html>
-    """
+    # html_code = f"""
+    #     <html>
+    #         <head>
+    #             {GA_JS}
+    #         </head>
+    #         <body>
+    #             <script>
+    #                 // This ensures the GA code runs
+    #                 console.log('GA injection successful');
+    #             </script>
+    #         </body>
+    #     </html>
+    # """
     
     # Inject the HTML
-    html(html_code, height=0, width=0)
+    # html(html_code, height=0, width=0)
+# inject_ga()
 
 def main():
     # Inject GA at the very start of your app
