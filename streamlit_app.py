@@ -110,11 +110,13 @@ def setup_page():
         )
         st.title("Exploring Risk and Return Relationship of Mutual Funds")
 
-setup_page()
+# setup_page()
 
 with open("google_analytics.html", "r") as f:
     html_code = f.read()
     components.html(html_code, height=0)
+
+st.title("Exploring Risk and Return Relationship of Mutual Funds")
 
 def load_data_from_drive():
         """
