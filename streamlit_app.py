@@ -28,7 +28,7 @@ def inject_ga():
     </script>
     """
 
-    st.set_page_config(page_title=GA_JS)
+    st.set_page_config(page_title='Mutual Fund Return & Risk Tool' )
      # Insert the script in the head tag of the static template inside your virtual
     # st.write(pathlib.Path(st.__file__).parent)
     # index_path = pathlib.Path(st.__file__).parent / "static" / "index.html"
@@ -56,22 +56,22 @@ def inject_ga():
     
     
     # Full HTML with GA in head
-    # html_code = f"""
-    #     <html>
-    #         <head>
-    #             {GA_JS}
-    #         </head>
-    #         <body>
-    #             <script>
-    #                 // This ensures the GA code runs
-    #                 console.log('GA injection successful');
-    #             </script>
-    #         </body>
-    #     </html>
-    # """
+    html_code = f"""
+        <html>
+            <head>
+                {GA_JS}
+            </head>
+            <body>
+                <script>
+                    // This ensures the GA code runs
+                    console.log('GA injection successful');
+                </script>
+            </body>
+        </html>
+    """
     
     # Inject the HTML
-    # html(html_code, height=0, width=0)
+    html(html_code, height=0, width=0)
 # inject_ga()
 
 def main():
@@ -111,18 +111,21 @@ def main():
     df = load_data_from_drive()
     df['annualized_mean_std'] = np.round(df['annualized_mean_std'] , 2)
     df['annualized_median_return'] = np.round(df['annualized_median_return'] , 2)
-    intro_text = '''We understand that risk is an important component of investing. 
-    With Risk being such an important part, there is hardly any discourse and limited
-    availablity of tools (riskometer being a widely used one) out there. This prompted me to build a tool that maps returns with risk in the context of mutual funds.
-
+    intro_text = '''
+    
     We all have risk preferences - some are risk neutral, some risk loving, and others risk averse.
     'How do I compare two funds with same risk rating, say, very high?' Is it enough to make a decision by comparing the returns of those two funds?
 
-    First, let's understand what 'Risk' means. Consider investment in a Fixed Deposit instrument offering a 7% returns for a period of 1 year.
+    
+    First, let's understand what 'Risk' means.
+
+    :blue-background[Consider investment in a Fixed Deposit instrument offering a 7% returns for a period of 1 year.
     At the end of year 1, your returns would be exactly 7%. Not more, not less. There is no uncertainty over this. Ignoring the withdrawal charges and other nuances,
     the daily return of this instrument is constant (one that equals 7% over a period of 1 year). Now, consider a Mutual Fund whose Net Asset Value (NAV) changes everyday.
-    There is uncertainty in returns of this instrument. More the returns or NAV varies, more is the uncertainty.
-    This variability is the risk, measured as Standard Deviation, which will be used synonymously with risk in this tool.  
+    There is uncertainty in returns of this instrument. More the returns or NAV varies, more is the uncertainty.]
+    
+    :green-background[This variability is the risk, measured as Standard Deviation, 
+    which will be used synonymously with risk in this tool.]  
 
     This tool can help you answer questions like:
     - How much risk am I actually taking?
