@@ -258,10 +258,9 @@ if my_choice == 'Assess a MF scheme I am invested':
                     ].sort_values('annualized_median_return', ascending=False).head(5)
                     
                     # Display the similar funds in a table
-            st.dataframe(similar_risk_funds[['scheme_name', 'annualized_median_return', 'annualized_mean_std']].style.format({
-                        'returns': '{:.2f}%',
-                        'risk': '{:.2f}%'
-                    }))
+            st.dataframe(similar_risk_funds[['scheme_name', 'annualized_median_return', 'annualized_mean_std']].rename
+                        (columns = {'annualized_median_return': 'Median_Return', 
+                                   'annualized_mean_std': 'Risk'}))
             # similar_risk_x = similar_risk_funds['annualized_mean_std']
             # similar_risk_y = similar_risk_funds['annualized_median_return']
             fig.add_scatter( 
@@ -296,10 +295,9 @@ if my_choice == 'Assess a MF scheme I am invested':
                     ].sort_values('annualized_mean_std', ascending=False).tail(5)
                     
             # Display the similar funds in a table
-            st.dataframe(similar_return_funds[['scheme_name', 'annualized_median_return', 'annualized_mean_std']].style.format({
-                        'returns': '{:.2f}%',
-                        'risk': '{:.2f}%'
-                    }))
+            st.dataframe(similar_return_funds[['scheme_name', 'annualized_median_return', 'annualized_mean_std']].rename
+                         (columns = {'annualized_median_return': 'Median_Return', 
+                                   'annualized_mean_std': 'Risk'}))
             fig.add_scatter( 
                             x=similar_return_funds['annualized_mean_std'],
                             y=similar_return_funds['annualized_median_return'],
@@ -319,11 +317,11 @@ if my_choice == 'Assess a MF scheme I am invested':
 
 if my_choice == 'Explore funds that satisfy my risk and return needs':
     st.write('Please select return and risk ranges from the slider')
-    required_return_range = st.slider("Select a range of values", 
+    required_return_range = st.slider("Select a range of required return", 
                                       df['annualized_median_return'].min(), 
                                       df['annualized_median_return'].max(), 
                                       (12.0, 15.0), step = 0.1)
-    required_risk_range = st.slider("Select a range of values", 
+    required_risk_range = st.slider("Select a range of acceptable risk", 
                                     df['annualized_mean_std'].min(), 
                                     df['annualized_mean_std'].max(), 
                                     (10.0, 12.0), step = 0.1)
@@ -338,14 +336,9 @@ if my_choice == 'Explore funds that satisfy my risk and return needs':
     no_of_funds_to_display = min(no_of_funds_to_display, funds_satisfying_requirements.shape[0])
             
     # Display the similar funds in a table
-    st.dataframe(funds_satisfying_requirements[['scheme_name', 'annualized_median_return', 'annualized_mean_std']].style.format
-                 (
-                      {
-                'returns': '{:.2f}%',
-                'risk': '{:.2f}%'
-                      }
-                )
-                )
+    st.dataframe(funds_satisfying_requirements[['scheme_name', 'annualized_median_return', 'annualized_mean_std']].
+                 rename(columns = {'annualized_median_return': 'Median_Return', 
+                                   'annualized_mean_std': 'Risk'}))
     path2_fig = px.scatter(
             funds_satisfying_requirements,
             x='annualized_mean_std',
