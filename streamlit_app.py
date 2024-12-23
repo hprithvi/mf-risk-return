@@ -132,27 +132,24 @@ st.title('Exploring Risk and Return Relationship for Mutual Funds')
 df = load_data_from_drive()
 df['annualized_mean_std'] = np.round(df['annualized_mean_std'] , 2)
 df['annualized_median_return'] = np.round(df['annualized_median_return'] , 2)
-intro_text = '''From my own experience and conversations with friends, investing in 
-Mutual Funds revolved only around returns. 3 months, 6 months, 1, 3, and 5 year returns
-is all most investors (including me) would look at before investing in a Mutual Fund scheme.
-I strongly believe that risk is an important component of investing, in fact, investing could be looked at 
-as risk management in a sense. With Risk being such an important part, there is hardly any discourse and even poor
-availablity of tools/support out there on most major direct investing platforms. This prompted me to build
-a tool that maps returns with risk in the context of mutual funds.
+intro_text = '''From my own experience and conversations with friends, investing decisions in 
+Mutual Funds revolved only around returns. We understand that risk is an important component of investing. 
+With Risk being such an important part, there is hardly any discourse and limited
+availablity of tools (riskometer being a widely used one) out there. This prompted me to build a tool that maps returns with risk in the context of mutual funds.
 
-How is this relevant? We all have risk preferences - some are risk neutral, some risk loving, and others risk averse.
-A widely available tool that talks about risk currently is Riskometer - with 6 risk rating levels ranging from
-Low to Very High Risk. There are definitions to each of these levels. While this is helpful, one question kept bothering me - 
+We all have risk preferences - some are risk neutral, some risk loving, and others risk averse.
 'How do I compare two funds with same risk rating, say, very high?' Is it enough to make a decision by comparing the returns of those two funds?
 
-This tool is my effort at exploring the above questions (and more). It tries to answer questions like:
+First, let's understand what 'Risk' means. Consider investment in a Fixed Deposit instrument offering a 7% returns for a period of 1 year.
+At the end of year 1, your returns would be exactly 7%. Not more, not less. There is no uncertainty over this. Ignoring the withdrawal charges and other nuances,
+the daily return of this instrument is constant (one that equals 7% over a period of 1 year). Now, consider a Mutual Fund whose Net Asset Value (NAV) changes everyday.
+There is uncertainty in returns of this instrument. More the returns or NAV varies, more is the uncertainty.
+This variability is the risk, measured as Standard Deviation, which will be used synonymously with risk in this tool.  
+
+This tool can help you answer questions like:
  - How much risk am I actually taking?
  - Are there better funds at a same level of risk as the fund I'm invested in?
  - Are there funds with a lower risk that can give similar level of returns? 
-
-This gives another dimension for investors to consider in their decisions. For example, if you consider
-yourself a risk averse investor and would like to get 12 percent annualized returns by taking the least risk
-possible, you could find answers to such questions.
 '''
 
 st.markdown(intro_text)
@@ -184,12 +181,12 @@ with st.form("my_form"):
    st.form_submit_button('Submit my choice')
 
 # This is outside the form
-st.write("Your choice is", my_choice)
+# st.write("Your choice is", my_choice)
 # st.write(my_color)
 
 if my_choice == 'Assess a MF scheme I am invested':
      
-
+    st.write("\n This workflow will help you understand how your selected fund performs in terms of risk and returns")
     search_scheme = st.text_input("Search for a scheme:")
         
         # Filter schemes based on search
@@ -248,74 +245,75 @@ if my_choice == 'Assess a MF scheme I am invested':
     # st.write("risk and returns {0}, {1}")        
     # Get the risk of selected scheme
     # selected_risk = df['annualized_mean_std'].values[0]
-        if my_choice_risk_returns == 'List funds with similar risk and top 5 returns':
+        # if my_choice_risk_returns == 'List funds with similar risk and top 5 returns':
                 
         # Filter funds within 0.5% risk range and sort by returns
-            risk_range = 0.5
-            similar_risk_funds = df[
-            (df['annualized_mean_std'] >= selected_scheme_risk - risk_range) & 
-            (df['annualized_mean_std'] <= selected_scheme_risk + risk_range)
-                    ].sort_values('annualized_median_return', ascending=False).head(5)
-                    
-                    # Display the similar funds in a table
-            st.dataframe(similar_risk_funds[['scheme_name', 'annualized_median_return', 'annualized_mean_std']].rename
-                        (columns = {'annualized_median_return': 'Median_Return', 
-                                   'annualized_mean_std': 'Risk'}))
-            # similar_risk_x = similar_risk_funds['annualized_mean_std']
-            # similar_risk_y = similar_risk_funds['annualized_median_return']
-            fig.add_scatter( 
-                            x=similar_risk_funds['annualized_mean_std'],
-                            y=similar_risk_funds['annualized_median_return'],
-                            mode='markers',
-                            marker=dict(size=6, color='blue'),
-                            name='Top 5 Schemes with similar risk',
-                            hovertext=similar_risk_funds['scheme_name']
-                            )
-            # x = [21, 22]
-            # y = [40, 40]
-            fig.add_vrect(x0=selected_scheme_risk - risk_range,
-                        x1=selected_scheme_risk + risk_range,
-                        fillcolor="blue",
+        risk_range = 0.5
+        similar_risk_funds = df[
+        (df['annualized_mean_std'] >= selected_scheme_risk - risk_range) & 
+        (df['annualized_mean_std'] <= selected_scheme_risk + risk_range)
+                ].sort_values('annualized_median_return', ascending=False).head(5)
+                
+                # Display the similar funds in a table
+        st.dataframe(similar_risk_funds[['scheme_name', 'annualized_median_return', 'annualized_mean_std']].rename
+                    (columns = {'annualized_median_return': 'Median_Return', 
+                                'annualized_mean_std': 'Risk'}))
+        # similar_risk_x = similar_risk_funds['annualized_mean_std']
+        # similar_risk_y = similar_risk_funds['annualized_median_return']
+        fig.add_scatter( 
+                        x=similar_risk_funds['annualized_mean_std'],
+                        y=similar_risk_funds['annualized_median_return'],
+                        mode='markers',
+                        marker=dict(size=6, color='blue'),
+                        name='Top 5 Schemes with similar risk',
+                        hovertext=similar_risk_funds['scheme_name']
+                        )
+        # x = [21, 22]
+        # y = [40, 40]
+        fig.add_vrect(x0=selected_scheme_risk - risk_range,
+                    x1=selected_scheme_risk + risk_range,
+                    fillcolor="blue",
+                    opacity=0.2,
+                    line_width=0.5)
+        # st.plotly_chart(fig)
+    # if my_choice_risk_returns == 'Explore funds with similar returns and lower risk':
+            
+        st.write("\n 5 Funds with Similar Returns Profile (within 0.5%) and lower risk:")
+        st.write("\n This table lists 5 Mutual funds with low risk that have annualized median return comparable to your selected fund")
+
+        # Get the risk of selected scheme
+        selected_return = df['annualized_median_return'].values[0]
+                
+        # Filter funds within 0.5% return range and sort by returns
+        return_range = 0.5
+        similar_return_funds = df[
+        (df['annualized_median_return'] >= selected_scheme_returns - return_range) & 
+        (df['annualized_median_return'] <= selected_scheme_returns + return_range)
+                ].sort_values('annualized_mean_std', ascending=False).tail(5)
+                
+        # Display the similar funds in a table
+        st.dataframe(similar_return_funds[['scheme_name', 'annualized_median_return', 'annualized_mean_std']].rename
+                        (columns = {'annualized_median_return': 'Return (%)', 
+                                'annualized_mean_std': 'Risk (%)'}))
+        fig.add_scatter( 
+                        x=similar_return_funds['annualized_mean_std'],
+                        y=similar_return_funds['annualized_median_return'],
+                        mode='markers',
+                        marker=dict(size=6, color='green'),
+                        name='5 Schemes with least risk and Similar Returns',
+                        hovertext=similar_return_funds['scheme_name'],
+                        text= ('Focus on this bar to find funds with similar risk and higher median returns ')
+                        )
+        fig.add_hrect(y0 = selected_scheme_returns - return_range,
+                        y1 = selected_scheme_returns + return_range,
+                        fillcolor="green",
                         opacity=0.2,
                         line_width=0.5)
-            # st.plotly_chart(fig)
-        # if my_choice_risk_returns == 'Explore funds with similar returns and lower risk':
-                
-            st.write("\n 5 Funds with Similar Returns Profile (within 0.5%) and lower risk:")
-            st.write("\n This table lists 5 Mutual funds with low risk that have annualized median return comparable to your selected fund")
-
-            # Get the risk of selected scheme
-            selected_return = df['annualized_median_return'].values[0]
-                    
-            # Filter funds within 0.5% return range and sort by returns
-            return_range = 0.5
-            similar_return_funds = df[
-            (df['annualized_median_return'] >= selected_scheme_returns - return_range) & 
-            (df['annualized_median_return'] <= selected_scheme_returns + return_range)
-                    ].sort_values('annualized_mean_std', ascending=False).tail(5)
-                    
-            # Display the similar funds in a table
-            st.dataframe(similar_return_funds[['scheme_name', 'annualized_median_return', 'annualized_mean_std']].rename
-                         (columns = {'annualized_median_return': 'Median_Return', 
-                                   'annualized_mean_std': 'Risk'}))
-            fig.add_scatter( 
-                            x=similar_return_funds['annualized_mean_std'],
-                            y=similar_return_funds['annualized_median_return'],
-                            mode='markers',
-                            marker=dict(size=6, color='green'),
-                            name='5 Schemes with least risk and Similar Returns',
-                            hovertext=similar_return_funds['scheme_name'],
-                            text= ('Focus on this bar to find funds with similar risk and higher median returns ')
-                            )
-            fig.add_hrect(y0 = selected_scheme_returns - return_range,
-                          y1 = selected_scheme_returns + return_range,
-                          fillcolor="green",
-                          opacity=0.2,
-                          line_width=0.5)
-            st.plotly_chart(fig)
+        st.plotly_chart(fig)
 
 
 if my_choice == 'Explore funds that satisfy my risk and return needs':
+    st.write("\n This choice helps you explore mutual funds with Risk and Returns within the range of your selection, if they exist")
     st.write('Please select return and risk ranges from the slider')
     required_return_range = st.slider("Select a range of required return", 
                                       df['annualized_median_return'].min(), 
@@ -336,13 +334,19 @@ if my_choice == 'Explore funds that satisfy my risk and return needs':
     no_of_funds_to_display = min(no_of_funds_to_display, funds_satisfying_requirements.shape[0])
             
     # Display the similar funds in a table
-    st.dataframe(funds_satisfying_requirements[['scheme_name', 'annualized_median_return', 'annualized_mean_std']].
+    st.dataframe(funds_satisfying_requirements[['scheme_name', 'annualized_median_return', 'annualized_mean_std']].head(no_of_funds_to_display).
                  rename(columns = {'annualized_median_return': 'Median_Return', 
                                    'annualized_mean_std': 'Risk'}))
     path2_fig = px.scatter(
             funds_satisfying_requirements,
             x='annualized_mean_std',
             y='annualized_median_return',
+            hover_data='scheme_name',
+            # title_text= 'Schemes that satisfy your Return and Risk characteristics',
+            labels={
+                     "annualized_mean_std": "Risk (%)",
+                     "annualized_median_return": "Return (%)"                     
+                 }
             # size = [6],
             # color = ['Selected scheme']
             # mode='markers',
