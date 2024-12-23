@@ -4,6 +4,12 @@ import numpy as np
 #conda install plotly
 import plotly.express as px
 
+import streamlit.components.v1 as components
+
+with open("google_analytics.html", "r") as f:
+    html_code = f.read()
+    components.html(html_code, height=0)
+
 # st.title("Mutual Fund Risk vs Returns Analysis")
 
 # # File upload
@@ -96,25 +102,23 @@ import plotly.express as px
 #                 'risk': '{:.2f}%'
 #             }))
 
-import streamlit.components.v1 as components
-
 # Include Google Analytics tracking code
-from pathlib import Path
+# from pathlib import Path
 
-def setup_page():
-        """Configure the Streamlit page settings"""
-        st.set_page_config(
-            page_title="Mutual Funds - Risk and Return Relationship",
-            page_icon="📈",
-            layout="wide"
-        )
-        st.title("Exploring Risk and Return Relationship of Mutual Funds")
+# def setup_page():
+#         """Configure the Streamlit page settings"""
+#         st.set_page_config(
+#             page_title="Mutual Funds - Risk and Return Relationship",
+#             page_icon="📈",
+#             layout="wide"
+#         )
+#         st.title("Exploring Risk and Return Relationship of Mutual Funds")
 
 # setup_page()
 
-with open("google_analytics.html", "r") as f:
-    html_code = f.read()
-    components.html(html_code, height=0)
+# with open("google_analytics.html", "r") as f:
+#     html_code = f.read()
+#     components.html(html_code, height=0)
 
 st.title("Exploring Risk and Return Relationship of Mutual Funds")
 
