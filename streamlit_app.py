@@ -28,19 +28,26 @@ def inject_ga():
     </script>
     """
      # Insert the script in the head tag of the static template inside your virtual
-    st.write(pathlib.Path(st.__file__).parent)
+    # st.write(pathlib.Path(st.__file__).parent)
     index_path = pathlib.Path(st.__file__).parent / "static" / "index.html"
     logging.info(f'editing {index_path}')
     soup = BeautifulSoup(index_path.read_text(), features="html.parser")
     if not soup.find(id='G-GFGYLG0VME'): 
-        bck_index = index_path.with_suffix('.bck')
-        if bck_index.exists():
-            shutil.copy(bck_index, index_path)  
-        else:
-            shutil.copy(index_path, bck_index)  
+        # bck_index = index_path.with_suffix('.bck')
+
+        # if bck_index.exists():
+        #     shutil.copy(bck_index, index_path)  
+        # else:
+        #     st.write("bck not found")
+        #     shutil.copy(index_path, bck_index)  
+        # st.write(bck_index, index_path)
         html = str(soup)
         new_html = html.replace('<head>', '<head>\n' + GA_JS)
         index_path.write_text(new_html)
+        # with open(index_path,"r") as f_in:
+        #     st.write("\n".join(f_in.readlines()))
+        # with open(bck_index,"r") as f_in:
+        #     st.write("\n".join(f_in.readlines()))
 
 
 
