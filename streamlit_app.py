@@ -28,7 +28,15 @@ def inject_ga():
     </script>
     """
 
-    st.set_page_config(page_title='Mutual Fund Return & Risk Tool' )
+    st.set_page_config(page_title='Mutual Fund Return & Risk Tool',
+    page_icon="🧊",
+     layout="wide",
+     initial_sidebar_state="collapsed",
+     menu_items={
+         'Get Help': 'mailto:hprithvikrishna@gmail.com',
+        #  'Report a bug': "https://www.extremelycoolapp.com/bug",
+         'About': "# This is a cool app on MF Risk and Returns with plans on more features!"
+          } )
      # Insert the script in the head tag of the static template inside your virtual
     # st.write(pathlib.Path(st.__file__).parent)
     # index_path = pathlib.Path(st.__file__).parent / "static" / "index.html"
