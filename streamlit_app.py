@@ -152,7 +152,7 @@ This tool is my effort at exploring the above questions (and more). It tries to 
 
 This gives another dimension for investors to consider in their decisions. For example, if you consider
 yourself a risk averse investor and would like to get 12 percent annualized returns by taking the least risk
-possible, you could get the fund(s) that meet your requirements.
+possible, you could find answers to such questions.
 '''
 
 st.markdown(intro_text)
@@ -174,7 +174,7 @@ st.markdown(intro_text)
 # st.write("\n Annualized Median Return is the return one could expect about 50 percent of the time, given the funds historical returns")
 
 
-st.write("\n Here, you could choose a mutual fund (one that you have/plan to invest in, maybe?) to see where its risk and median returns (both annualized) stand ")
+st.write("\n Here, you could choose to Assess a mutual fund (one that you have/plan to invest in, maybe?) or Find what funds meet your risk and return requirements ")
 
 
 with st.form("my_form"):
