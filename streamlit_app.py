@@ -14,6 +14,7 @@ import numpy as np
 import plotly.express as px
 import streamlit as st
 from streamlit.components.v1 import html
+from streamlit_dynamic_filters import DynamicFilters
 
 def inject_ga():
     """Inject Google Analytics JS code"""
@@ -33,7 +34,7 @@ def inject_ga():
      layout="wide",
      initial_sidebar_state="collapsed",
      menu_items={
-         'Get Help': 'mailto:hprithvikrishna@gmail.com',
+         'Get Help': 'mailto:hprithvikrishna@gmail.com?',
         #  'Report a bug': "https://www.extremelycoolapp.com/bug",
          'About': "# This is a cool app on MF Risk and Returns with plans on more features!"
           } )
@@ -102,8 +103,8 @@ def main():
             Supports multiple file formats (csv, excel, parquet).
             """
             # Define the data directory - update this path to your data location
-            data_file = "data/scheme_stats_MC_atleast_3_yrs.csv"  # Update this path
-            
+            # data_file = "data/scheme_stats_MC_atleast_3_yrs.csv"  # Update this path
+            data_file = "data/scheme_stats_MC_atleast_3_yrs.csv"
             try:
                 # Look for data files in the specified directory
                 # data_file = list(Path(DATA_DIR).glob("*.csv"))  # For CSV files
@@ -166,15 +167,23 @@ def main():
     with st.form("my_form"):
         st.write("What do you want to do?")
         #    my_number = st.slider('Pick a number', 1, 10)
-        my_choice = st.selectbox('Choose one action', ['Explore funds that satisfy my risk and return needs','Assess a MF scheme I am invested'])
+        my_choice = st.selectbox('Choose one action', ['Explore funds that satisfy my risk and return needs','Assess a MF scheme I am invested / want to invest in'])
         st.form_submit_button('Submit my choice')
 
     # This is outside the form
     # st.write("Your choice is", my_choice)
     # st.write(my_color)
 
-    if my_choice == 'Assess a MF scheme I am invested':
+    if my_choice == 'Assess a MF scheme I am invested / want to invest in':
         
+        dynamic_filters = DynamicFilters(df, filters=['Asset_Class', 'Scheme_Type'])
+
+        with st.sidebar:
+            dynamic_filters.display_filters()
+
+        dynamic_filters.display_df()
+
+
         st.write("\n This workflow will help you understand how your selected fund performs in terms of risk and returns")
         search_scheme = st.text_input("Search for a scheme:")
             
@@ -193,12 +202,32 @@ def main():
             # Highlight selected scheme if any
         if selected_scheme:
             selected_data = df[df['scheme_name'] == selected_scheme]
-            fig = px.scatter(
-                selected_data,
-                x='annualized_mean_std',
-                y='annualized_median_return',
-                size = [10],
-                color = ['Selected scheme']
+            selected_scheme_df = pd.DataFrame(
+                    {
+                        'Risk': [float(selected_data['annualized_mean_std'])
+                                , float(selected_data['annualized_mean_std'])
+                                , float(selected_data['annualized_mean_std'])] ,
+                        'Returns': [float(selected_data['annualized_median_return'])
+                                , float(selected_data['bottom_5_percentile'])
+                                , float(selected_data['top_5_percentile'])] ,
+                        'Point_Labels': ['Median Returns'
+                                , 'Worst Case Returns'
+                                , 'Best Case Returns']
+                    }
+
+            )
+            # selected_data['point_label'] = ['Median Returns', 'Worst case returns', 'Best Case returns']
+            fig_selected_scheme = px.scatter(
+                selected_scheme_df,
+                x= 'Risk',
+                y = 'Returns',
+                # ['', '', ''],
+                size = [8, 8, 8],
+                # text = 'Point_Labels',
+                color= ['Median Returns', 'Worst Case Returns', 'Best Case Returns'],
+                # hover_data = {'Scheme Risk': selected_scheme_df['Risk']
+                            #   ,'Scheme Returns': selected_scheme_df['Returns'] }
+                # text = 'point_label'
                 # mode='markers',
                 # marker=dict(size=12, color='red'),
                 # name='Selected Scheme',
@@ -207,7 +236,7 @@ def main():
 
 
             # Display the plot
-            st.plotly_chart(fig)
+            st.plotly_chart(fig_selected_scheme)
             
             # Display the data table
             # st.write("Data Table:")
@@ -218,8 +247,8 @@ def main():
             selected_scheme_risk = float(df.loc[df['scheme_name']==selected_scheme]['annualized_mean_std'])
             selected_scheme_returns = float(df.loc[df['scheme_name']==selected_scheme]['annualized_median_return'])
 
-            st.write("Annualized median Returns of", selected_scheme,":", round(selected_scheme_returns, 2))
-            st.write("Annualized Risk of", selected_scheme,":", round(selected_scheme_risk,2))
+            st.write("Annualized median Returns of your selected scheme:", round(selected_scheme_returns, 2))
+            st.write("Annualized Risk of your selected scheme:", round(selected_scheme_risk,2))
         
         
     #         with st.form("my_risk_return_form"):
@@ -229,7 +258,7 @@ def main():
     #             st.form_submit_button('Submit my choice')
         
             st.write("\n Top 5 Funds best returns and Similar Risk Profile (within 0.5%):")
-            st.write("\n This table lists top 5 Mutual funds in terms of annualized median return and a similar level of risk as that of your selected fund")
+            # st.write("\n This table lists top 5 Mutual funds in terms of annualized median return and a similar level of risk as that of your selected fund")
         # st.write("\n If your selected fund is not in the list, investing in one of these funds would ")
         # st.write("risk and returns {0}, {1}")        
         # Get the risk of selected scheme
@@ -249,6 +278,25 @@ def main():
                                     'annualized_mean_std': 'Risk'}))
             # similar_risk_x = similar_risk_funds['annualized_mean_std']
             # similar_risk_y = similar_risk_funds['annualized_median_return']
+
+            fig = px.scatter(
+                selected_data,
+                x= 'annualized_mean_std',
+                y = 'annualized_median_return',
+                # ['', '', ''],
+                size = [5],
+                title = 'MEDIAN returns for your selected MF and Comparable MFs'
+                # text = 'Point_Labels',
+                # color= ['Median Returns', 'Worst Case Returns', 'Best Case Returns'],
+                # hover_data = {'Scheme Risk': selected_scheme_df['Risk']
+                            #   ,'Scheme Returns': selected_scheme_df['Returns'] }
+                # text = 'point_label'
+                # mode='markers',
+                # marker=dict(size=12, color='red'),
+                # name='Selected Scheme',
+                # hovertext=selected_data['scheme_name']
+            )
+
             fig.add_scatter( 
                             x=similar_risk_funds['annualized_mean_std'],
                             y=similar_risk_funds['annualized_median_return'],
@@ -256,6 +304,7 @@ def main():
                             marker=dict(size=6, color='blue'),
                             name='Top 5 Schemes with similar risk',
                             hovertext=similar_risk_funds['scheme_name']
+                            
                             )
             # x = [21, 22]
             # y = [40, 40]
@@ -268,7 +317,7 @@ def main():
         # if my_choice_risk_returns == 'Explore funds with similar returns and lower risk':
                 
             st.write("\n 5 Funds with Similar Returns Profile (within 0.5%) and lower risk:")
-            st.write("\n This table lists 5 Mutual funds with low risk that have annualized median return comparable to your selected fund")
+            # st.write("\n This table lists 5 Mutual funds with low risk that have annualized median return comparable to your selected fund")
 
             # Get the risk of selected scheme
             selected_return = df['annualized_median_return'].values[0]
