@@ -4,3 +4,4 @@ pandas
 numpy
 pathlib
 bs4
+streamlit_dynamic_filters
