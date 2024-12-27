@@ -97,14 +97,14 @@ def main():
 
     st.title("Exploring Risk and Return Relationship of Mutual Funds")
 
-    def load_data_from_drive():
+    def load_data_from_file():
             """
             Load data from a specific directory on drive.
             Supports multiple file formats (csv, excel, parquet).
             """
             # Define the data directory - update this path to your data location
             # data_file = "data/scheme_stats_MC_atleast_3_yrs.csv"  # Update this path
-            data_file = "data/scheme_stats_MC_atleast_3_yrs.csv"
+            data_file = "data/scheme_stats_with_metadata.csv"
             try:
                 # Look for data files in the specified directory
                 # data_file = list(Path(DATA_DIR).glob("*.csv"))  # For CSV files
@@ -117,7 +117,7 @@ def main():
 
     # st.title('Exploring Risk and Return Relationship for Mutual Funds')
 
-    df = load_data_from_drive()
+    df = load_data_from_file()
     df['annualized_mean_std'] = np.round(df['annualized_mean_std'] , 2)
     df['annualized_median_return'] = np.round(df['annualized_median_return'] , 2)
     intro_text = '''
@@ -176,7 +176,7 @@ def main():
 
     if my_choice == 'Assess a MF scheme I am invested / want to invest in':
         
-        dynamic_filters = DynamicFilters(df, filters=['Asset_Class'])
+        dynamic_filters = DynamicFilters(df, filters=['Scheme_Type'])
 
        
        
