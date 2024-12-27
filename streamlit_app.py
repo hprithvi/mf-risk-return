@@ -118,6 +118,7 @@ def main():
     # st.title('Exploring Risk and Return Relationship for Mutual Funds')
 
     df = load_data_from_file()
+    st.write("Baba booey", df.shape)
     df['annualized_mean_std'] = np.round(df['annualized_mean_std'] , 2)
     df['annualized_median_return'] = np.round(df['annualized_median_return'] , 2)
     intro_text = '''
@@ -176,14 +177,14 @@ def main():
 
     if my_choice == 'Assess a MF scheme I am invested / want to invest in':
         
-        dynamic_filters = DynamicFilters(df, filters=['Asset_Class', 'Scheme_Type', 'Investment_Type'])
+        dynamic_filters = DynamicFilters(df, filters=['Asset_Class', 'Scheme_Type',])
 
        
        
-        with st.sidebar:
-            dynamic_filters.display_filters()
+        # with st.sidebar:
+        #     dynamic_filters.display_filters()
 
-        dynamic_filters.display_df()
+        # dynamic_filters.display_df()
 
 
         st.write("\n This workflow will help you understand how your selected fund performs in terms of risk and returns")
