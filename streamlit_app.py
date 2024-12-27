@@ -176,7 +176,7 @@ def main():
 
     if my_choice == 'Assess a MF scheme I am invested / want to invest in':
         
-        dynamic_filters = DynamicFilters(df, filters=['Scheme_Type'])
+        dynamic_filters = DynamicFilters(df, filters=['Asset_Class', 'Scheme_Type', 'Investment_Type'])
 
        
        
