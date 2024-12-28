@@ -4,4 +4,4 @@ pandas
 numpy
 pathlib
 bs4
-streamlit_dynamic_filters
+streamlit_dynamic_filters==0.1.9

@@ -118,33 +118,37 @@ def main():
     # st.title('Exploring Risk and Return Relationship for Mutual Funds')
 
     df = load_data_from_file()
-    st.write("Baba booey", df.shape)
+    # st.write("Baba booey", df.shape)
     df['annualized_mean_std'] = np.round(df['annualized_mean_std'] , 2)
     df['annualized_median_return'] = np.round(df['annualized_median_return'] , 2)
     intro_text = '''
     
-    We all have risk preferences - some are risk neutral, some risk loving, and others risk averse.
-    'How do I compare two funds with same risk rating, say, very high?' Is it enough to make a decision by comparing the returns of those two funds?
-
-    
-    First, let's understand what 'Risk' means.
-
     :blue-background[Consider investment in a Fixed Deposit instrument offering a 7% returns for a period of 1 year.
-    At the end of year 1, your returns would be exactly 7%. Not more, not less. There is no uncertainty over this. Ignoring the withdrawal charges and other nuances,
-    the daily return of this instrument is constant (one that equals 7% over a period of 1 year). Now, consider a Mutual Fund whose Net Asset Value (NAV) changes everyday.
-    There is uncertainty in returns of this instrument. More the returns or NAV varies, more is the uncertainty.]
+    At the end of year 1, your returns would be exactly 7% with no uncertainty. Now, consider a Mutual Fund whose Net Asset Value (NAV) changes everyday.
+    There is uncertainty in returns of this instrument over any time period. More the returns or NAV varies, more is the uncertainty.]
     
-    :green-background[This variability is the risk, measured as Standard Deviation, 
+    :green-background[Risk is the variance in price/return, measured as Standard Deviation, 
     which will be used synonymously with risk in this tool.]  
 
     This tool can help you answer questions like:
-    - How much risk am I actually taking?
+    - How much risk are you taking?
     - Are there better funds at a same level of risk as the fund I'm invested in?
     - Are there funds with a lower risk that can give similar level of returns? 
     '''
 
     st.markdown(intro_text)
+    st.image("./images/stochastic_process.png", caption = 'Example of a MF returns over 1 year as a Distribution')
 
+    image_text = '''
+                :red-background[Prices of risky instruments like MFs can't be predicted over any time period and hence we use simulations to 
+                understand how the probability distribution of prices would be. The above image shows how the price a MF with an initial price of 100
+                could evolve over 1 year. Distributions like this could give valuable insights like the median return, worst case return, and best case return.
+                These insights could help us in making well-informed decisions.          
+                ]
+    
+                 '''
+    
+    st.markdown(image_text)
     # Create scatter plot
     # fig = px.scatter( 
     #     df,
@@ -162,13 +166,16 @@ def main():
     # st.write("\n Annualized Median Return is the return one could expect about 50 percent of the time, given the funds historical returns")
 
 
-    st.write("\n Here, you could choose to Assess a mutual fund (one that you have/plan to invest in, maybe?) or Find what funds meet your risk and return requirements ")
+    # st.write("\n Here, you could choose to Assess a mutual fund (one that you have/plan to invest in, maybe?) or Find what funds meet your risk and return requirements ")
 
 
     with st.form("my_form"):
         st.write("What do you want to do?")
         #    my_number = st.slider('Pick a number', 1, 10)
-        my_choice = st.selectbox('Choose one action', ['Explore funds that satisfy my risk and return needs','Assess a MF scheme I am invested / want to invest in'])
+        my_choice = st.selectbox('Choose one action',
+                                  ['Explore funds that satisfy my risk and return needs',
+                                   'Assess a MF scheme I am invested / want to invest in',
+                                   'I want to filter MFs based on its attributes'])
         st.form_submit_button('Submit my choice')
 
     # This is outside the form
@@ -177,17 +184,8 @@ def main():
 
     if my_choice == 'Assess a MF scheme I am invested / want to invest in':
         
-        dynamic_filters = DynamicFilters(df, filters=['Asset_Class', 'Scheme_Type',])
-
-       
-       
-        # with st.sidebar:
-        #     dynamic_filters.display_filters()
-
-        # dynamic_filters.display_df()
-
-
-        st.write("\n This workflow will help you understand how your selected fund performs in terms of risk and returns")
+        
+        st.write("\n You can choose one MF scheme to find its performance in terms of risk and returns")
         search_scheme = st.text_input("Search for a scheme:")
             
             # Filter schemes based on search
@@ -248,10 +246,15 @@ def main():
     # If a scheme is selected, show similar risk funds
         if selected_scheme:
             selected_scheme_risk = float(df.loc[df['scheme_name']==selected_scheme]['annualized_mean_std'])
-            selected_scheme_returns = float(df.loc[df['scheme_name']==selected_scheme]['annualized_median_return'])
+            selected_scheme_median_returns = float(df.loc[df['scheme_name']==selected_scheme]['annualized_median_return'])
+            selected_scheme_best_returns = float(df.loc[df['scheme_name']==selected_scheme]['top_5_percentile'])
+            selected_scheme_worst_returns = float(df.loc[df['scheme_name']==selected_scheme]['bottom_5_percentile'])
 
-            st.write("Annualized median Returns of your selected scheme:", round(selected_scheme_returns, 2))
-            st.write("Annualized Risk of your selected scheme:", round(selected_scheme_risk,2))
+            st.write('For your selected scheme:')
+            st.write("\n 1 Yr Median Returns:", round(selected_scheme_median_returns, 2))
+            st.write("\n 1 Yr Best Case Scenario Returns:", round(selected_scheme_best_returns, 2))
+            st.write("\n 1 Yr Worst Case Scenario Returns:", round(selected_scheme_worst_returns, 2))
+            st.write("\n Annualized Risk:", round(selected_scheme_risk,2))
         
         
     #         with st.form("my_risk_return_form"):
@@ -260,7 +263,7 @@ def main():
     #             my_choice_risk_returns = st.selectbox('Choose one option', ['Explore funds with similar returns and lower risk','List funds with similar risk and top 5 returns'])
     #             st.form_submit_button('Submit my choice')
         
-            st.write("\n Top 5 Funds best returns and Similar Risk Profile (within 0.5%):")
+            st.write("\n Look at these funds if you want to get Median returns for s risk similar to the fund you've selected:")
             # st.write("\n This table lists top 5 Mutual funds in terms of annualized median return and a similar level of risk as that of your selected fund")
         # st.write("\n If your selected fund is not in the list, investing in one of these funds would ")
         # st.write("risk and returns {0}, {1}")        
@@ -319,7 +322,7 @@ def main():
             # st.plotly_chart(fig)
         # if my_choice_risk_returns == 'Explore funds with similar returns and lower risk':
                 
-            st.write("\n 5 Funds with Similar Returns Profile (within 0.5%) and lower risk:")
+            st.write("\n Look at these funds if you want to get Median returns similar to that of your selected fund but at a lower level of risk")
             # st.write("\n This table lists 5 Mutual funds with low risk that have annualized median return comparable to your selected fund")
 
             # Get the risk of selected scheme
@@ -328,8 +331,8 @@ def main():
             # Filter funds within 0.5% return range and sort by returns
             return_range = 0.5
             similar_return_funds = df[
-            (df['annualized_median_return'] >= selected_scheme_returns - return_range) & 
-            (df['annualized_median_return'] <= selected_scheme_returns + return_range)
+            (df['annualized_median_return'] >= selected_scheme_median_returns - return_range) & 
+            (df['annualized_median_return'] <= selected_scheme_median_returns + return_range)
                     ].sort_values('annualized_mean_std', ascending=False).tail(5)
                     
             # Display the similar funds in a table
@@ -345,8 +348,8 @@ def main():
                             hovertext=similar_return_funds['scheme_name'],
                             text= ('Focus on this bar to find funds with similar risk and higher median returns ')
                             )
-            fig.add_hrect(y0 = selected_scheme_returns - return_range,
-                            y1 = selected_scheme_returns + return_range,
+            fig.add_hrect(y0 = selected_scheme_median_returns - return_range,
+                            y1 = selected_scheme_median_returns + return_range,
                             fillcolor="green",
                             opacity=0.2,
                             line_width=0.5)
@@ -412,6 +415,85 @@ def main():
         path2_fig.update_xaxes(range=[df['annualized_mean_std'].min(), df['annualized_mean_std'].max()])
         path2_fig.update_yaxes(range=[df['annualized_median_return'].min(), df['annualized_median_return'].max()])
         st.plotly_chart(path2_fig)
+
+
+    if my_choice == 'I want to filter MFs based on its attributes':
+
+        if 'Unnamed: 0' in df.columns:
+            df = df.drop('Unnamed: 0', axis=1)
+
+# Define numeric and categorical columns explicitly
+        numeric_columns = [
+            'scheme_code', 
+            'annualized_median_return', 
+            'top_25_percentile', 
+            'bottom_25_percentile', 
+            'bottom_5_percentile', 
+            'top_5_percentile', 
+            'annualized_mean_std'
+        ]
+
+        categorical_columns = [
+            'scheme_name',
+            'Fund_House',
+            'Scheme_Type',
+            'Asset_Class',
+            'Investment_Type'
+        ]
+
+        # Convert numeric columns
+        for col in numeric_columns:
+            df[col] = pd.to_numeric(df[col], errors='coerce')
+
+        # Ensure categorical columns are strings
+        for col in categorical_columns:
+            df[col] = df[col].astype(str)
+
+        # Print data types to verify conversions
+        # st.write("DataFrame column types:", df.dtypes)
+        st.write('Use the sidebar on the top left to filter MF schemes')
+        # Create filters with explicit configuration
+        filters_config = {
+            'Investment_Type': {
+                'type': 'select',
+                'values': sorted(df['Investment_Type'].unique().tolist())
+            },
+            'Asset_Class': {
+                'type': 'select',
+                'values': sorted(df['Asset_Class'].unique().tolist())
+            },
+            'Scheme_Type': {
+                'type': 'select',
+                'values': sorted(df['Scheme_Type'].unique().tolist())
+            }
+            
+        }
+
+        try:
+            with st.sidebar:
+                dynamic_filters = DynamicFilters(
+                    df=df[[ 'scheme_name',
+                            'Fund_House', 
+                            'Asset_Class',
+                            'Scheme_Type',
+                            'Investment_Type',
+                            'annualized_median_return',
+                            'annualized_mean_std',
+                              ]],
+                    # filters=filters_config
+                    filters = [] #, 'Asset_Class', 'Scheme_Type', 'Investment_Type']
+                )
+                dynamic_filters.display_filters()
+            
+            # Get and display filtered dataframe
+            filtered_df = dynamic_filters.filter_df()
+            st.write('The below table shows MF as per your selection of filters in the sidebar')
+            st.dataframe(filtered_df)
+
+        except Exception as e:
+            st.error(f"Error encountered: {str(e)}")
+            st.write("DataFrame head:", df.head())
+            st.write("DataFrame info:", df.info())
 
 
 if __name__ == "__main__":
