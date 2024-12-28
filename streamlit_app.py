@@ -29,15 +29,7 @@ def inject_ga():
     </script>
     """
 
-    st.set_page_config(page_title='Mutual Fund Return & Risk Tool',
-    page_icon="🚀",
-     layout="wide",
-    #  initial_sidebar_state="collapsed",
-     menu_items={
-         'Get Help': 'mailto:hprithvikrishna@gmail.com?',
-        #  'Report a bug': "https://www.extremelycoolapp.com/bug",
-         'About': "# This is a cool app on MF Risk and Returns with plans on more features!"
-          } )
+    
      # Insert the script in the head tag of the static template inside your virtual
     # st.write(pathlib.Path(st.__file__).parent)
     # index_path = pathlib.Path(st.__file__).parent / "static" / "index.html"
@@ -85,13 +77,29 @@ def inject_ga():
 
 def main():
     # Inject GA at the very start of your app
-    inject_ga()
+    
+    st.set_page_config(page_title='Mutual Fund Return & Risk Tool',
+    page_icon="🚀",
+     layout="centered",
+    #  initial_sidebar_state="collapsed",
+     menu_items={
+         'Get Help': 'mailto:hprithvikrishna@gmail.com?',
+        #  'Report a bug': "https://www.extremelycoolapp.com/bug",
+         'About': "# This is a cool app on MF Risk and Returns with plans on more features!"
+          } )
+    
+    # inject_ga()
     css='''
 [data-testid="stSidebarNav"] {
     position:absolute;
     bottom: 0;
 }
 '''
+    def admin_sidebar():
+        with st.sidebar:
+            st.page_link('./streamlit_app.py', label='Choose Filters')
+    
+    admin_sidebar()
 
     st.markdown(f'<style>{css}</style>', unsafe_allow_html=True)
     # Your regular Streamlit app code here
