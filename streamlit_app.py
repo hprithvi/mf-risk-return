@@ -30,7 +30,7 @@ def inject_ga():
     """
 
     st.set_page_config(page_title='Mutual Fund Return & Risk Tool',
-    page_icon="🧊",
+    page_icon="🚀",
      layout="wide",
     #  initial_sidebar_state="collapsed",
      menu_items={
@@ -86,7 +86,14 @@ def inject_ga():
 def main():
     # Inject GA at the very start of your app
     inject_ga()
-    
+    css='''
+[data-testid="stSidebarNav"] {
+    position:absolute;
+    bottom: 0;
+}
+'''
+
+    st.markdown(f'<style>{css}</style>', unsafe_allow_html=True)
     # Your regular Streamlit app code here
     # st.title("My Streamlit App")
     # ... rest of your app ...
