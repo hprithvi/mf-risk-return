@@ -32,7 +32,7 @@ def inject_ga():
     st.set_page_config(page_title='Mutual Fund Return & Risk Tool',
     page_icon="🧊",
      layout="wide",
-     initial_sidebar_state="collapsed",
+    #  initial_sidebar_state="collapsed",
      menu_items={
          'Get Help': 'mailto:hprithvikrishna@gmail.com?',
         #  'Report a bug': "https://www.extremelycoolapp.com/bug",
