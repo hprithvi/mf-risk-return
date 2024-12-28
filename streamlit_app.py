@@ -496,7 +496,7 @@ def main():
                             'annualized_mean_std',
                               ]],
                     # filters=filters_config
-                    filters = [] #, 'Asset_Class', 'Scheme_Type', 'Investment_Type']
+                    filters = ['Asset_Class', 'Scheme_Type'] #, 'Asset_Class', 'Scheme_Type', 'Investment_Type']
                 )
                 dynamic_filters.display_filters()
             
