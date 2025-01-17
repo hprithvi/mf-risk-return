@@ -5,3 +5,5 @@ numpy
 pathlib
 bs4
 streamlit_dynamic_filters==0.1.9
+s3fs
+st-files-connection
